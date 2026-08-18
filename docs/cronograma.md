@@ -10,7 +10,7 @@ pela equipe depois que responsáveis e disponibilidade de bancada forem confirma
 | 3 | confirmar montagem real | Pedro | acesso à bancada | sensor, R1/R2, burden, GPIO, ponto médio e fotos | pendente |
 | 4 | fechar regra da Campanha 01 | Nathália e orientador | análise das duas regras | decisão registrada e base coerente | pendente |
 | 5 | executar teste-piloto | Mel, Pedro e Nathália | etapas 1–3 | uma linha/s, metadados, sem duplicidades e com relatório | pendente |
-| 6 | concluir documentação independente da calibração | Fábio | informações disponíveis | README e documentos coerentes; pendências explícitas | em andamento |
+| 6 | concluir documentação independente da calibração | Fábio | informações disponíveis | README e documentos coerentes; pendências explícitas | Concluído |
 | 7 | disponibilizar alicate amperímetro AC | orientador | disponibilidade externa | instrumento identificado e disponível | aguardando recurso externo |
 | 8 | calibrar e validar corrente | Pedro e equipe | etapas 3, 5 e 7 | fator, tabela de pontos e erro de validação | bloqueada pela etapa 7 |
 | 9 | realizar campanha definitiva | equipe | etapas 5 e 8 | protocolo, base bruta, base processada e qualidade | não iniciada |
