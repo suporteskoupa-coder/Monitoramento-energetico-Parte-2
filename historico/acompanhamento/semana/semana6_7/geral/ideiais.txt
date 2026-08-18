@@ -1,0 +1,52 @@
+======================================================================
+
+O CIRCUITO COMPLETO NA PROTOBOARD
+======================================================================
+
+Mapeamento visual da distribuição dos componentes e fiação principal em torno do microcontrolador.
+
+O QUE PESQUISAR
+"ESP32 SCT-013 wiring diagram Fritzing" ou "Monitor de energia ESP32 SCT-013"
+
+O QUE OBSERVAR
+Como os cabos de alimentação saem das trilhas de energia do ESP32 (GND e 3.3V) e se conectam diretamente às linhas de distribuição da protoboard, além do direcionamento do sinal para o pino ADC escolhido (ex: pino 34 ou 32).
+
+======================================================================
+
+======================================================================
+2. O CIRCUITO DE OFFSET (DIVISOR RESISTIVO)
+Montagem responsável por elevar o sinal alternado do sensor para garantir que apenas tensões positivas entrem no ESP32.
+
+O QUE PESQUISAR
+"SCT-013 offset circuit breadboard" ou "Voltage divider SCT-013 Arduino"
+
+O QUE OBSERVAR
+A ligação exata de dois resistores de mesmo valor (ex: 10k ohms) e um capacitor de desacoplamento (ex: 10uF ou 100uF). Note que um resistor se conecta ao 3.3V e o outro ao GND. O "meio" (ponto de junção central) é a sua referência de tensão positiva, onde o sensor se conecta.
+
+======================================================================
+
+======================================================================
+3. A PINAGEM DO CONECTOR JACK P2
+Identificação dos terminais físicos para fazer a transição correta do plugue do sensor para a protoboard.
+
+O QUE PESQUISAR
+"SCT-013 Jack P2 pinout" ou "SCT-013 female jack connection"
+
+O QUE OBSERVAR
+O sensor usa um plugue macho tipo P2. Para a protoboard, usa-se um Jack P2 fêmea. A pesquisa visual ajuda a identificar quais pinos do conector fêmea equivalem à ponta (Tip) e à base (Sleeve) do plugue macho, evitando leituras mudas ou curtos.
+
+======================================================================
+
+======================================================================
+4. INSTALAÇÃO DO SENSOR NO CABO (CRÍTICO)
+Posicionamento correto do sensor no cabo de energia do equipamento monitorado.
+
+O QUE PESQUISAR
+"How to clamp SCT-013" ou "SCT-013 fase e neutro"
+
+O QUE OBSERVAR
+O sensor não pode abraçar o cabo completo (que contém Fase e Neutro juntos), pois os campos magnéticos opostos se anulam, resultando em leitura zero. O sensor deve abraçar APENAS UM CONDUTOR (geralmente o Fase).
+
+DICA DE OURO:
+Pesquise por "EmonLib ESP32 Fritzing". Esta biblioteca (do projeto OpenEnergyMonitor) é o padrão de mercado e trará os diagramas elétricos mais consolidados para o seu projeto.
+======================================================================

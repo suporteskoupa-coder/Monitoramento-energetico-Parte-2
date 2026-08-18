@@ -1,0 +1,35 @@
+1) BLOCO TÉCNICO
+SEMANA 6 (04 a 11/06/2026)
+OBJETIVO
+Montar o sistema real de aquisição.
+ESTUDO
+Tema 1
+ADC do ESP32
+Pesquisar:
+• ADC ESP32
+• analogRead ESP32
+Tema 2
+SCT-013
+Pesquisar:
+• transformador de corrente
+• sensor não invasivo
+Tema 3
+Circuito de offset
+Pesquisar:
+• divisor resistivo
+• referência de tensão
+ATIVIDADES
+Hardware
+• estudar SCT-013
+estudar jack P2
+• revisar circuito
+ESP32
+• ADC
+• serial
+• código
+Documentação
+• registrar arquitetura
+• produzir diagrama atualizado
+ENTREGA DA SEMANA 6
+Mostrar:
+ESP32 + circuito montado + leitura ADC

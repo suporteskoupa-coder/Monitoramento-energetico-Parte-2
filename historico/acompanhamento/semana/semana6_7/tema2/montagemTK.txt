@@ -1,0 +1,80 @@
+======================================================================
+SIMULAÇÃO PRÁTICA NO TINKERCAD (ADAPTAÇÃO COM ARDUINO UNO)
+======================================================================
+
+Como o Tinkercad usa o Arduino Uno rodando a 5V, o nosso "falso zero" 
+(DC Bias) muda de 1.65V para 2.5V (metade de 5V).
+
+O Gerador de Funções vai injetar uma onda que vai para o lado negativo, 
+e o circuito com os resistores vai empurrá-la para cima, exatamente 
+como faria com o ESP32 na vida real.
+
+---
+
+### CONFIGURAÇÃO DOS COMPONENTES NO TINKERCAD
+
+* Gerador de Função (Function Generator):
+  - Função: Seno (Sine)
+  - Frequência: 60 Hz
+  - Amplitude: 1 V (Fará a onda variar entre -1V e +1V)
+  - Deslocamento CC (DC Offset): 0
+
+* Resistores:
+  - Dois resistores idênticos de 10 kOhm (ou 100 kOhm).
+
+* Capacitor:
+  - Um capacitor eletrolítico de 10 uF.
+
+---
+
+### O CÓDIGO PARA O TINKERCAD (Arduino Uno)
+
+Como a biblioteca EmonLib não vem instalada por padrão no Tinkercad, 
+este código "puro" (sem bibliotecas) permite rodar a simulação e ver 
+o gráfico diretamente no Plotador Serial.
+
+// Pino onde o sinal deslocado está conectado
+const int pinoAnalogico = A0;
+
+void setup() {
+  Serial.begin(9600);
+  // No Arduino Uno, a resolução padrão é de 10 bits (0 a 1023)
+}
+
+void loop() {
+  // Lê o valor atual do pino (vai ler algo entre 0 e 1023)
+  int valorLido = analogRead(pinoAnalogico);
+  
+  // Converte o número digital de volta para Volts (0V a 5V)
+  float tensaoLida = valorLido * (5.0 / 1023.0);
+  
+  // Subtrai o deslocamento físico de 2.5V para descobrir a onda real
+  float ondaOriginal = tensaoLida - 2.5;
+
+  // Imprime os valores formatados para o Plotador Serial do Tinkercad
+  // (Abra o Monitor Serial e clique em "Gráfico" para ver as ondas)
+  Serial.print("Sinal_no_Pino(Com_Offset):");
+  Serial.print(tensaoLida);
+  Serial.print(",");
+  Serial.print("Onda_Original_Calculada:");
+  Serial.println(ondaOriginal);
+
+  // Um pequeno delay para não travar a simulação
+  delay(10); 
+}
+
+---
+
+### O QUE VOCÊ VAI VER NA SIMULAÇÃO?
+
+Ao abrir o Monitor Serial e ativar o Gráfico (Plotador Serial) no 
+Tinkercad, você verá duas linhas correndo na tela:
+
+1. Linha do "Sinal no Pino": 
+   Ela sobe e desce, mas flutua de forma totalmente segura acima de zero, 
+   variando exatamente entre 1.5V e 3.5V.
+
+2. Linha da "Onda Original": 
+   É o valor que o código calculou após subtrair os 2.5V de deslocamento. 
+   Ela mostra a onda real simulada, variando perfeitamente entre -1V e +1V.
+======================================================================

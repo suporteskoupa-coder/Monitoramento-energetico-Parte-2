@@ -1,0 +1,77 @@
+======================================================================
+CONDICIONAMENTO DE SINAIS: DIVISOR RESISTIVO E DESLOCAMENTO DC (BIAS)
+======================================================================
+
+Este conteúdo aborda justamente como resolver o problema anterior: como 
+adaptar os níveis de tensão de um sensor para que o ESP32 consiga lê-los 
+com total segurança e precisão.
+
+---
+
+### 1. DIVISOR RESISTIVO (OU DIVISOR DE TENSÃO)
+
+O divisor resistivo é um dos circuitos mais simples e utilizados na 
+eletrônica. Ele serve para reduzir uma tensão mais alta para um valor 
+mais baixo, usando apenas dois resistores em série.
+
+* Como Funciona?
+  Quando a corrente elétrica passa pelos dois resistores ligados em série, 
+  ocorre uma "queda de tensão" em cada um deles. Se pegarmos o sinal 
+  exatamente no ponto central entre os dois resistores, teremos uma 
+  fração da tensão de entrada.
+
+* Fórmula Matemática:
+  Vout = Vin * (R2 / (R1 + R2))
+
+* Aplicação Prática no Sistema:
+  Imagine que você tem um sensor que fornece um sinal de 5V, mas o ESP32 
+  só suporta até 3.3V.
+  
+  Se usarmos os resistores R1 = 1.7 kOhm e R2 = 3.3 kOhm:
+  Vout = 5 * (3.3 / (1.7 + 3.3))
+  Vout = 5 * (3.3 / 5)
+  Vout = 3.3V
+  
+  Pronto! O sinal foi adaptado com segurança para o microcontrolador.
+
+---
+
+### 2. REFERÊNCIA DE TENSÃO (OFFSET / BIAS)
+
+O sensor de corrente SCT-013 gera uma onda alternada (AC) que oscila entre 
+lados positivos e negativos. Como o ESP32 não lê tensões negativas, 
+precisamos aplicar uma Referência de Tensão.
+
+Na eletrônica, criar uma referência de tensão (DC Bias / Offset) significa 
+estabelecer uma "linha de terra virtual" em um valor positivo estável.
+
+* Como Aplicar isso com o SCT-013 e o ESP32?
+  
+  1. O Alvo: Para o ESP32, o ideal é criar uma referência de 1.65V (que 
+     é exatamente a metade de 3.3V).
+     
+  2. Divisor Base: Você usa um divisor resistivo com dois resistores 
+     iguais (por exemplo, dois de 10 kOhm) ligados entre o pino 3.3V e 
+     o GND do ESP32. O ponto central deles será exatamente 1.65V.
+     
+  3. Filtro de Ruído: Você conecta um capacitor eletrolítico (geralmente 
+     de 10 uF) em paralelo com o resistor de baixo. Esse capacitor serve 
+     como um filtro para estabilizar a referência, impedindo que ruídos 
+     da fonte interfiram na leitura.
+     
+  4. Ligação do Sensor: Você liga um dos fios do sensor SCT-013 nessa 
+     referência de 1.65V e o outro fio diretamente no pino do ADC do ESP32.
+
+---
+
+### O RESULTADO PRÁTICO NO GRÁFICO
+
+A onda de Corrente Alternada do sensor, que antes oscilava entre -1V e +1V 
+(tendo o 0V como centro), agora passa a usar o 1.65V como o seu novo centro.
+
+* O pico negativo vai para: 1.65V - 1V = 0.65V (Totalmente seguro)
+* O pico positivo vai para: 1.65V + 1V = 2.65V (Dentro do limite de 3.3V)
+
+Dessa forma, o sinal flutua inteiramente na faixa positiva e o ADC consegue 
+processar toda a onda sem perder nenhuma informação e sem queimar o chip.
+======================================================================

@@ -1,0 +1,71 @@
+======================================================================
+
+O QUE É TUDO ISSO? (DESMISTIFICANDO AS MATÉRIAS)
+======================================================================
+
+Entenda os conceitos teóricos do seu projeto traduzidos para um português claro e direto.
+
+TEMA 1: ADC DO ESP32 E analogRead
+O ESP32 é o "cérebro" do seu projeto. O mundo real é analógico (as coisas mudam de forma contínua, como a temperatura ou a corrente elétrica), mas o ESP32 é digital (só entende 0 e 1).
+
+ADC (Conversor Analógico-Digital): É a parte do chip que traduz a voltagem do mundo real em um número que o processador entenda.
+
+analogRead: É o comando de código (geralmente na IDE do Arduino) que você usa para mandar o ESP32 ler essa voltagem em um pino específico.
+
+TEMA 2: SCT-013 (TRANSFORMADOR DE CORRENTE)
+Esse é o sensor que você vai usar. Ele parece um "prendedor" ou uma pinça preta.
+
+Não invasivo: Significa que você não precisa cortar nenhum fio de energia para medir a corrente. Você só "abraça" um dos fios do aparelho (o fio Fase) com ele.
+
+Indução magnética: A energia passando pelo fio gera um campo magnético, e o SCT-013 transforma esse campo em um sinal elétrico menor que pode ser medido. Ele geralmente vem com uma saída do tipo Jack P2 (igual àquela entrada antiga de fone de ouvido).
+
+TEMA 3: CIRCUITO DE OFFSET (DIVISOR RESISTIVO)
+Aqui está o pulo do gato e o maior cuidado que você deve ter: O sensor SCT-013 gera uma onda de corrente alternada (AC), ou seja, ela vai para a parte positiva e para a parte negativa (ex: +1V e -1V). O ESP32 não aceita voltagens negativas (se entrar voltagem negativa, você queima o pino do chip!).
+
+Circuito de Offset / Divisor Resistivo: É uma montagem simples com dois resistores iguais e um capacitor. A função dele é "jogar a onda para cima" (dar um "offset"). Se a onda ia de -1V a +1V, com o offset ela passa a flutuar, por exemplo, de 0.65V a 2.65V, ficando totalmente na faixa positiva que o ESP32 aguenta ler (que é de 0V a 3.3V).
+
+======================================================================
+
+======================================================================
+2. ORIENTAÇÃO PASSO A PASSO PARA REALIZAR A ENTREGA
+Sua entrega exige três pilares: Hardware (Montagem), Código (ESP32) e Documentação. Vamos por partes:
+
+PASSO 1: O HARDWARE (MONTAGEM NO PROTOBOARD)
+Entenda o Jack P2: Descubra quais são os pinos do conector P2 fêmea que correspondem ao sinal do sensor SCT-013 (geralmente são os pinos da ponta e da base).
+
+Monte o circuito de offset: Conecte os dois resistores em série entre o pino de 3.3V do ESP32 e o GND (Terra). O meio deles será a sua "nova referência" de tensão (1.65V).
+
+Ligue o sensor: Conecte o sensor a essa referência e a saída dele a um pino com função ADC do ESP32 (ex: GPIO 34 ou 32, evite os pinos do ADC2 se for usar Wi-Fi).
+
+PASSO 2: O CÓDIGO (ESP32)
+Você precisa criar um código simples na IDE do Arduino para testar se a leitura funciona. O esqueleto do código é basicamente este:
+
+C++
+const int pinoSensor = 34; // Escolha o pino ADC correto do seu ESP32
+
+void setup() {
+  Serial.begin(115200); // Inicializa a comunicação serial
+  pinMode(pinoSensor, INPUT);
+}
+
+void loop() {
+  int valorADC = analogRead(pinoSensor); // Lê o valor (0 a 4095)
+  Serial.println(valorADC);              // Mostra o valor na tela
+  delay(100);                            // Espera 100 milissegundos
+}
+Abra o Serial Plotter da IDE do Arduino. Se você passar um fio com corrente pelo sensor, deverá ver o gráfico subindo e descendo na tela (uma onda senoidal).
+
+PASSO 3: DOCUMENTAÇÃO
+Registros: Não deixe isso para trás. Tire fotos nítidas do seu circuito.
+
+Arquitetura/Diagrama: Desenhe o esquema de como as coisas se conectam. Pode usar ferramentas gratuitas como o Fritzing ou o Tinkercad para fazer um desenho bonito de como os resistores, o sensor e o ESP32 estão interligados.
+
+PASSO 4: O QUE VOCÊ VAI DE FATO ENTREGAR?
+Os professores geralmente pedem um vídeo curto (de 1 a 2 minutos) ou fotos comprobatórias. Foque em mostrar claramente:
+
+O ESP32 conectado ao protoboard com o circuito de offset.
+
+O sensor SCT-013 conectado no circuito.
+
+A tela do seu computador mostrando o Monitor Serial ou o Serial Plotter atualizando os números conforme o sensor faz a leitura.
+======================================================================

@@ -1,0 +1,96 @@
+======================================================================
+ANATOMIA DO HARDWARE: DISSECANDO O SISTEMA DE AQUISIÇÃO
+======================================================================
+
+Entender cada componente separadamente é o segredo para conseguir 
+diagnosticar qualquer problema no circuito mais tarde. O sistema é 
+composto por três blocos principais:
+
+---
+
+1. O SENSOR SCT-013
+----------------------------------------------------------------------
+O SCT-013 é o "olho" do seu projeto. Ele é um Transformador de Corrente 
+(TC) do tipo split-core (núcleo partido), projetado para medir Corrente 
+Alternada (AC) com segurança.
+
+* O Núcleo de Ferrite: 
+  Quando você fecha a "garra" do sensor ao redor de um fio elétrico, o 
+  campo magnético gerado pela corrente daquele fio passa a circular pelo 
+  núcleo de ferrite do sensor.
+
+* O Enrolamento Secundário: 
+  Dentro do sensor, existem milhares de voltas de um fio de cobre muito 
+  fino. Esse enrolamento sofre a influência do campo magnético do núcleo 
+  e gera uma corrente proporcional muito menor na saída.
+
+* A Relação de Transformação: 
+  No modelo SCT-013-000, a relação é de 100A : 50mA. Se passarem 100A 
+  no fio da rede, o sensor liberará apenas 50mA nos fios de saída. Se 
+  passarem 10A, ele soltá 5mA.
+
+* Segurança Isolada: 
+  O sensor não tem nenhuma ligação elétrica direta com o fio de alta 
+  tensão. Tudo funciona por indução magnética. Se a rede tiver um surto, 
+  o ESP32 estará protegido desse contato direto.
+
+---
+
+2. O CONECTOR JACK P2
+----------------------------------------------------------------------
+O cabo do SCT-013 termina em um plugue macho de 3.5 mm (P2), igual ao de 
+fones de ouvido antigos. Para conectá-lo à protoboard, usa-se um Jack P2 
+Fêmea. Um plugue P2 padrão possui 3 seções metálicas:
+
+* Tip (Ponta): Sinal de saída positivo do sensor.
+* Sleeve (Base/Corpo): Sinal de saída negativo (retorno) do sensor.
+* Ring (Anel central): No SCT-013, este pino não é usado (desconectado).
+
+> DICA DE MONTAGEM: Ao encaixar o Jack P2 Fêmea na protoboard, use um 
+  multímetro para identificar quais pinos correspondem à Ponta (Tip) e 
+  à Base (Sleeve). São esses dois que vão se conectar ao circuito. Se 
+  errar os pinos, o ESP32 lerá apenas zero fixo.
+
+---
+
+3. O CIRCUITO DE CONDICIONAMENTO (OFFSET + BURDEN)
+----------------------------------------------------------------------
+Este circuito é a "ponte de tradução" entre o sensor e o ESP32. Ele 
+transforma a corrente em tensão e eleva o sinal para a faixa positiva através 
+de três partes internas:
+
+A. O Resistor de Burden (Carga)
+   * Função: O ESP32 não lê corrente diretamente, apenas tensão. O 
+     resistor de Burden é colocado em paralelo com os dois fios do 
+     sensor (Ponta e Base do P2).
+   * Funcionamento: Quando a corrente do sensor passa por ele, a Lei de 
+     Ohm entra em ação (V = R * I) e cria uma tensão alternada proporcional. 
+   * Nota: Se o seu sensor for o modelo com saída em tensão (ex: SCT-013-030), 
+     esse resistor já veio soldado de fábrica dentro dele.
+
+B. O Divisor de Tensão (Gerador de 1.65V)
+   * Função: O ESP32 queima com tensões negativas. A onda AC gerada no 
+     resistor de burden oscila acima e abaixo de 0V. Precisamos empurrar 
+     essa onda para cima.
+   * Funcionamento: Dois resistores idênticos (ex: 10 kOhm) são ligados em 
+     série entre o 3V3 e o GND do ESP32. No meio deles, a tensão é dividida 
+     exatamente na metade: 1.65V. Ligamos a Base do sensor (Sleeve) nesse 
+     ponto. Agora, a onda passa a oscilar tendo o 1.65V como centro.
+
+C. O Capacitor de Filtro
+   * Função: O divisor de 1.65V é muito sensível. Qualquer ruído elétrico 
+     vindo da fonte do ESP32 faria essa referência oscilar, estragando a 
+     precisão da leitura.
+   * Funcionamento: O capacitor (geralmente 10 uF) funciona como uma 
+     bateria minúscula de suporte ligada entre o ponto de 1.65V e o GND. 
+     Ele absorve variações rápidas de ruído e mantém os 1.65V estáveis.
+
+---
+
+### EM RESUMO (O FLUXO DO SINAL)
+
+O SCT-013 capta o campo magnético -> O Jack P2 traz o sinal para a placa -> 
+O Resistor de Burden transforma a corrente em tensão -> O Divisor com 
+Capacitor garante que essa tensão fique em uma faixa positiva, limpa e 
+segura para o ADC do ESP32 ler através da função analogRead().
+======================================================================

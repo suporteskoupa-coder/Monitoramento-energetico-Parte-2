@@ -1,0 +1,48 @@
+const int pinoADC = 34; // Pino onde o sensor está ligado
+const int OFFSET_DIGITAL = 2048; // 1.65V no ADC de 12 bits do ESP32 (4096 / 2)
+
+void setup() {
+  Serial.begin(115200);
+}
+
+void loop() {
+  int maiorValor = 0;
+  int valorLido = 0;
+
+  // Coleta amostras durante 20 milissegundos (1 ciclo completo de 60Hz)
+  unsigned long tempoInicio = millis();
+  while ((millis() - tempoInicio) < 20) {
+    valorLido = analogRead(pinoADC);
+    
+    // Guarda o maior valor encontrado na onda (o pico positivo)
+    if (valorLido > maiorValor) {
+      maiorValor = valorLido;
+    }
+  }
+
+  // ---- APLICAÇÃO DO OFFSET NO CÓDIGO ----
+  // Subtraímos 2048 para que o "zero" da onda volte a ser zero no cálculo
+  int amplitudeDigital = maiorValor - OFFSET_DIGITAL;
+
+  // Se o valor for menor que zero (ruído), ajustamos para zero
+  if (amplitudeDigital < 0) {
+    amplitudeDigital = 0;
+  }
+
+  // Convertendo o valor digital de pico para Tensão de Pico real (0 a 3.3V)
+  float tensaoPico = (amplitudeDigital * 3.3) / 4096.0;
+
+  // Se o seu sensor for o SCT-013-030 (30A = 1V), convertemos tensão para corrente:
+  // (Multiplicamos por 30 porque 1V de pico = 30A de pico)
+  float correntePico = tensaoPico * 30.0;
+  
+  // Para achar a Corrente RMS (aquela que usamos no dia a dia):
+  float correnteRMS = correntePico / 1.414; 
+
+  // Mostra os resultados no Monitor Serial
+  Serial.print("Corrente Calculada: ");
+  Serial.print(correnteRMS);
+  Serial.println(" A");
+
+  delay(1000); // Aguarda 1 segundo para a próxima medição
+}

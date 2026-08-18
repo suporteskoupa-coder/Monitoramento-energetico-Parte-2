@@ -1,0 +1,12 @@
+# Texto normalizado no repositório, independentemente do sistema operacional.
+* text=auto eol=lf
+
+# Arquivos binários.
+*.avif binary
+*.jfif binary
+*.jpeg binary
+*.jpg binary
+*.pdf binary
+*.png binary
+*.webp binary
+*.zip binary

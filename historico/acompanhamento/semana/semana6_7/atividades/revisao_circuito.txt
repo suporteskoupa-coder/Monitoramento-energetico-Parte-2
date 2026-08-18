@@ -1,0 +1,118 @@
+======================================================================
+REVISÃO SÓLIDA: CIRCUITOS ELÉTRICOS E APLICAÇÃO PRÁTICA
+======================================================================
+
+Um circuito elétrico é um caminho fechado por onde a corrente elétrica 
+(o fluxo de elétrons) consegue circular. Pense nele como uma "pista de 
+corrida" para a energia: se houver qualquer interrupção, os elétrons 
+param imediatamente.
+
+Entender estes fundamentos vai te dar total segurança na hora de 
+modificar, calcular ou expandir o seu sistema de aquisição.
+
+---
+
+### 1. OS TRÊS PILARES DA ELETRÔNICA (ANALOGIA HIDRÁULICA)
+
+A forma mais fácil de entender as grandezas fundamentais é pensando no 
+circuito como um sistema de encanamento de água:
+
+* Tensão (V) - Medida em Volts [V]
+  É a "pressão" que empurra os elétrons. É a diferença de potencial entre 
+  dois pontos. No seu projeto, o pino do ESP32 gera uma pressão de 3.3V 
+  (e o Arduino Uno gera 5V).
+
+* Corrente (I) - Medida em Amperes [A]
+  É o "fluxo" ou a vazão da água (a quantidade de elétrons que passa pelo 
+  fio por segundo). O sensor SCT-013 mede justamente essa vazão na rede 
+  elétrica.
+
+* Resistência (R) - Medida em Ohms [Ohm]
+  É o "estreitamento" do cano. Ela dificulta a passagem da água. Os 
+  resistores servem para controlar, limitar e moldar o fluxo de corrente.
+
+> A LEI DE OHM (A Fórmula Mãe): V = R * I
+  - Se aumentar a Tensão, a Corrente aumenta.
+  - Se aumentar a Resistência, a Corrente diminui.
+
+* APLICAÇÃO REAL DA LEI DE OHM NO SEU CIRCUITO:
+  Se o sensor SCT-013-000 solta uma corrente (I) de 0.05A (50mA) e você 
+  faz essa corrente passar por um resistor de burden (R) de 22 Ohm, a 
+  tensão gerada nas pontas dele será exatamente:
+  V = 22 * 0.05 = 1.1V. 
+  A Lei de Ohm é o que faz o sensor de corrente virar um sensor de tensão!
+
+---
+
+### 2. CIRCUITOS EM SÉRIE vs. CIRCUITOS EM PARALELO
+
+A forma como você conecta os componentes muda completamente o comportamento 
+da tensão e da corrente:
+
+* Circuito em Série (Caminho Único)
+  Os componentes são ligados um após o outro, formando um único caminho.
+  - Regra: A corrente (I) é a MESMA em todos. A tensão (V) se DIVIDE.
+  - Aplicação no seu projeto: O divisor de tensão usa dois resistores 
+    em série. A tensão de 3.3V do ESP32 se divide igualmente entre eles 
+    (1.65V para cada um) porque eles estão em série e têm o mesmo valor.
+
+* Circuito em Paralelo (Caminhos Alternativos)
+  Os componentes são ligados lado a lado, compartilhando os mesmos nós 
+  de entrada e saída.
+  - Regra: A tensão (V) é a MESMA em todos. A corrente (I) se DIVIDE.
+  - Aplicação no seu projeto: O resistor de burden fica em paralelo com 
+    o sensor SCT-013 para garantir que toda a tensão gerada por ele seja 
+    direcionada para o pino do ESP32. O capacitor de filtro também fica 
+    em paralelo com o resistor de baixo para estabilizar a tensão ali.
+
+---
+
+### 3. O PAPEL CRÍTICO DO CAPACITOR
+
+Diferente dos resistores, que apenas barram a corrente, o capacitor 
+funciona como um reservatório temporário de energia (uma mini caixa d'água).
+
+* Em Corrente Contínua (DC): 
+  Quando você liga o circuito, o capacitor se carrega até atingir a tensão 
+  do ponto onde está (no seu caso, os 1.65V do offset). Uma vez carregado, 
+  ele bloqueia a corrente contínua, funcionando como uma rua sem saída.
+
+* Filtragem de Ruído: 
+  Se a tensão de 1.65V tentar cair por uma fração de milissegundo devido 
+  a um ruído elétrico, o capacitor descarrega sua energia guardada e 
+  sustenta o nível. Se a tensão tentar subir rápido demais com um pico de 
+  ruído, o capacitor absorve o excesso.
+
+* Resultado: 
+  Ele garante que a referência de 1.65V fique perfeitamente "lisa" e 
+  estável para o ADC do ESP32 trabalhar sem leituras fantasmas.
+
+---
+
+### 4. SITUAÇÕES DE CONTROLE: CIRCUITO ABERTO vs. CURTO-CIRCUITO
+
+* Circuito Fechado: 
+  O caminho está perfeito e contínuo. A corrente flui e as cargas funcionam.
+
+* Circuito Aberto: 
+  Há uma quebra no caminho (um fio solto). A resistência do ar é infinita, 
+  o que faz a corrente cair para zero. 
+  (Lembrete: Deixar o secundário de um TC convencional em circuito aberto 
+  gera tensões perigosas!).
+
+* Curto-Circuito (O Perigo Máximo): 
+  É quando o fio positivo encosta direto no negativo (GND) sem passar por 
+  nenhuma carga ou resistor. Como a resistência vai a quase zero, a corrente 
+  sobe para o infinito instantaneamente. Isso gera calor extremo, derrete 
+  fios e queima componentes como o ESP32.
+
+---
+
+### EM RESUMO (PENSAMENTO DE ENGENHARIA)
+
+Projetar o circuito de condicionamento do seu sensor é o ato de aplicar 
+a Lei de Ohm e as regras de associação (Série/Paralelo) para guiar a 
+corrente e moldar a onda alternada. O circuito garante que o sinal chegue 
+no ADC do microcontrolador em uma faixa estritamente positiva, limpa de 
+ruídos e totalmente segura para a função analogRead().
+======================================================================

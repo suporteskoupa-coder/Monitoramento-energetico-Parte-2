@@ -1,0 +1,15 @@
+Como o Tinkercad não tem o sensor SCT-013, a comunidade simula esse sensor usando um Gerador de Sinais (Function Generator) configurado para gerar uma onda senoidal (AC).
+
+
+Copie e cole estes termos no Google ou YouTube:
+
+"Tinkercad AC voltage offset Arduino"
+
+"Simular sensor AC com gerador de função Tinkercad"
+
+"Como simular sinal alternado no Tinkercad"
+
+
+Como montar a simulação no Tinkercad:No lugar do sensor SCT-013, coloque um Gerador de Função.Configure o gerador para uma onda Senoidal (Sine), com frequência de 60 Hz (a frequência da rede elétrica).Ajuste a amplitude para $1\text{V}$ (se estiver simulando o SCT-013-030).O pulo do gato: No Tinkercad, ligue o polo negativo do gerador de função no ponto central do seu divisor de tensão ($1.65\text{V}$) e o polo positivo no pino analógico.
+
+O que esse código faz de importante?Ao definir OFFSET_DIGITAL = 2048, o código entende que qualquer leitura igual a 2048 significa "zero amperes". Se o sensor mandar um pico de onda que chegue a 2500, a linha maiorValor - OFFSET_DIGITAL faz a conta: $2500 - 2048 = 452$.Esse $452$ é o tamanho real da onda gerada pelo sensor, livre da interferência do circuito de proteção!

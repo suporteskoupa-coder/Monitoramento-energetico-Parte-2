@@ -1,0 +1,104 @@
+======================================================================
+PASSO A PASSO: MONTAGEM DO CIRCUITO DE DESLOCAMENTO DC (DC BIAS)
+======================================================================
+
+Com base nos componentes do Tinkercad (Arduino Uno, Protoboard, Gerador 
+de Função, Osciloscópio e Capacitor Eletrolítico), veja como realizar 
+a montagem e a configuração do circuito de condicionamento.
+
+---
+
+### PASSO 1: MONTAGEM FÍSICA NA PROTOBOARD
+
+O circuito usa o Arduino Uno como base e simula a entrada do sensor 
+SCT-013 através do Gerador de Função. 
+
+* IMPORTANTE: 
+  Para este circuito, você precisará adicionar dois resistores idênticos 
+  (de 10 kOhm ou 100 kOhm) à sua protoboard para criar o divisor de 
+  tensão que gera o "falso zero" de 2.5V.
+
+---
+
+### PASSO 2: CONFIGURAÇÕES E PARÂMETROS DOS EQUIPAMENTOS
+
+Para que a simulação funcione e os gráficos no osciloscópio coincidam 
+com a teoria, ajuste os parâmetros dos equipamentos virtuais seguindo 
+as instruções abaixo:
+
+A. Configuração do Gerador de Função (Simulando o Sensor)
+   Este equipamento substitui o sensor físico e injetará uma onda AC 
+   segura para o Arduino.
+   * Clique no Gerador de Função e defina no painel:
+     - Função (Function): Senoidal (Sine)
+     - Frequência (Frequency): 60 Hz (ou 1 kHz para visualização rápida)
+     - Amplitude (Amplitude): 1 V (Gera uma onda de -1V a +1V de pico)
+     - Deslocamento CC (DC Offset): 0 (Muito importante manter em 0, pois 
+       o nosso circuito externo é quem fará o deslocamento).
+
+B. Configuração do Osciloscópio (Visualização do Sinal)
+   O osciloscópio monitorará o sinal condicionado que entra no pino A0.
+   * Clique no Osciloscópio e defina no painel:
+     - Tempo por divisão (Time per division): 5 ms (Permite ver alguns 
+       ciclos da onda de 60Hz).
+     - Tensão por divisão (Voltage per division): 1 V (Ajusta a escala 
+       para a onda caber na tela).
+
+---
+
+### RESULTADO ESPERADO NA TELA DO OSCILOSCÓPIO
+
+Com essas configurações e a montagem física correta (que cria o offset 
+de 2.5V no Arduino Uno), você verá uma onda senoidal flutuando na tela. 
+
+Ela NÃO oscilará ao redor da linha central (0V), mas sim ao redor da 
+linha de 2.5V, variando aproximadamente entre 1.5V e 3.5V. Isso prova que 
+o sinal foi deslocado e agora está perfeitamente seguro para o ADC 
+do microcontrolador.
+======================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+A montagem adaptada que vamos fazer:
+
+Aqui está o código completo e pronto para você copiar e colar no Tinkercad.Como mencionei antes, a biblioteca padrão EmonLib não vem instalada nativamente na simulação do Tinkercad. Por isso, este código foi desenvolvido usando lógica pura para ler a porta analógica A0, converter o sinal digital de volta para Volts e fazer a correção matemática (subtraindo os $2.5\text{V}$ de deslocamento do circuito) para você visualizar tudo funcionando no gráfico.
+
+// Define o pino analógico onde o circuito está conectado
+const int pinoAnalogico = A0;
+
+void setup() {
+  // Inicializa a comunicação serial a 9600 bps
+  Serial.begin(9600);
+}
+
+void loop() {
+  // 1. Lê o valor bruto do ADC do Arduino Uno (varia de 0 a 1023)
+  int valorBruto = analogRead(pinoAnalogico);
+  
+  // 2. Converte o valor digital de volta para a tensão física em Volts (0V a 5V)
+  float tensaoLida = valorBruto * (5.0 / 1023.0);
+  
+  // 3. Subtrai o "falso zero" de 2.5V gerado pelo circuito para achar a onda AC real
+  float ondaOriginal = tensaoLida - 2.5;
+
+  // 4. Imprime os dados formatados para o Plotador Serial do Tinkercad.
+  // O formato "Nome:Valor" permite que o Tinkercad gere duas linhas separadas no gráfico.
+  Serial.print("Sinal_Com_Offset(V):");
+  Serial.print(tensaoLida);
+  Serial.print(",");
+  Serial.print("Onda_Real_Calculada(V):");
+  Serial.println(ondaOriginal);
+
+  // Aguarda 10 milissegundos antes da próxima leitura para não travar a simulação
+  delay(10); 
+}

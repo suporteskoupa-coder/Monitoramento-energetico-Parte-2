@@ -1,0 +1,27 @@
+NUMEROS INTEIROS											DUE ou ZERO
+--------------------------------------------------------------------------------------------------------------------------------------------------
+byte		8 bits  (1 byte)		     0 até 255
+int		16 bits (2 bytes)	       -32.768 até 32.767
+unsigned int	16 bits (2 bytes)		     0 até 65.535
+word		16 bits (2 bytes)		     0 até 65.535	  				32 bits (4 bytes)      0 até 4.294.967.295
+long		32 bits (4 bytes)	-2.147.483.648 até 2.147.483.647
+unsigned long	32 bits (4 bytes)		     0 até 4.294.967.295
+short		16 bits (2 bytes)	       -32.768 até 32.767
+
+
+NUMEROS DECIMAIS
+--------------------------------------------------------------------------------------------------------------------------------------------------
+float		32 bits (4 bytes)	-3,4028235E+38 até 3,4028235E+38	6-7 decimal digits
+double		32 bits (4 bytes)	-3,4028235E+38 até 3,4028235E+38	6-7 decimal digits	64 bits (8 bytes)
+
+
+VERDADEIRO OU FALSO
+----------------------------------------------------------
+boolean		8 bits (1 byte)		true or false (verdadeiro ou falso)
+
+
+TEXTO
+----------------------------------------------------------
+char		8 bits (1 byte)		-128 até 127
+unsigned char	8 bits (1 byte)		   0 até 255
+String		flexível		   flexível

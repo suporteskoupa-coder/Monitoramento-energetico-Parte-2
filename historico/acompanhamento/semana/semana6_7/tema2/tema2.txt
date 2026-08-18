@@ -1,0 +1,79 @@
+======================================================================
+ENTENDENDO O SENSOR SCT-013 (TRANSFORMADOR DE CORRENTE)
+======================================================================
+
+O SCT-013 é, fundamentalmente, um Transformador de Corrente (TC).
+
+Diferente de um transformador convencional (que altera a tensão, como 
+de 220V para 12V), o TC é projetado para reduzir a corrente que passa 
+por um fio para um valor muito menor e seguro, proporcional à 
+corrente original.
+
+---
+
+### COMO FUNCIONA O "SENSOR NÃO INVASIVO"?
+
+Ele é chamado de "não invasivo" porque possui um núcleo magnético de 
+ferrite que se abre como uma pinça (tipo "clip-on").
+
+* Sem Cortes: 
+  Você não precisa cortar o fio da rede elétrica ou interromper o 
+  circuito para medir a corrente.
+
+* Segurança: 
+  Basta "abraçar" o fio condutor. O campo magnético gerado pela corrente 
+  que passa pelo fio induz uma corrente menor dentro do próprio sensor.
+
+> REGRA DE OURO DA INSTALAÇÃO: 
+  Você deve abraçar apenas um dos fios (ou a Fase, ou o Neutro). Se você 
+  abraçar o cabo completo (com Fase e Neutro juntos), o campo magnético 
+  de um cancela o do outro, e a leitura será sempre zero.
+
+---
+
+### MODELOS DO SCT-013 (Muito Cuidado na Escolha!)
+
+Existem várias versões do SCT-013 no mercado, e escolher a errada pode 
+queimar o ADC do seu ESP32. Elas se dividem em dois tipos principais:
+
+1. Saída em Corrente (Ex: SCT-013-000)
+   * Como funciona: Reduz a corrente na proporção de 100A para 50mA 
+     (relação de 2000:1).
+   * O que você precisa: Ele não solta tensão sozinho. Se ligar direto 
+     no ESP32, não vai ler nada (ou pode danificar). Você é obrigado a 
+     colocar um resistor externo em paralelo (chamado Resistor de Burden) 
+     para converter essa corrente em uma tensão que o ESP32 consiga ler.
+
+2. Saída em Tensão (Ex: SCT-013-030, SCT-013-050)
+   * Como funciona: Ele já possui o resistor de burden interno. Por 
+     exemplo, o SCT-013-030 mede até 30A e solta uma tensão de 0 a 1V RMS 
+     na saída.
+   * Vantagem: É mais fácil de usar porque já entrega tensão direta.
+
+---
+
+### O DESAFIO: CORRENTE ALTERNADA (AC) vs. ESP32 (DC)
+
+Aqui está o maior desafio do seu sistema de aquisição ao usar o SCT-013 
+com o ESP32:
+
+* A rede elétrica da sua casa é Corrente Alternada (AC). Isso significa 
+  que a tensão de saída do sensor vai oscilar entre ondas positivas e negativas.
+* O ESP32 só lê tensões estritamente positivas (entre 0V e 3.3V). Se uma 
+  onda negativa do sensor entrar no ESP32, você pode queimar o pino do 
+  microcontrolador.
+
+---
+
+### COMO RESOLVER ISSO NO SISTEMA REAL? (Circuito de Condicionamento)
+
+Para ler o SCT-013 no ESP32 com segurança, você precisará criar um pequeno 
+circuito externo com resistores e um capacitor para fazer um Deslocamento 
+de DC (DC Bias).
+
+Esse circuito "soma" uma tensão contínua de 1.65V (metade de 3.3V) ao sinal 
+do sensor. Dessa forma, a onda alternada do sensor passa a oscilar de 
+forma totalmente positiva (ex: variando entre 0.65V e 2.65V), permitindo 
+que a função analogRead() faça a leitura correta das ondas sem risco de 
+danos ao hardware.
+======================================================================

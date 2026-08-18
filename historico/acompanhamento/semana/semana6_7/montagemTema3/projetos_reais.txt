@@ -1,0 +1,63 @@
+Para encontrar projetos reais, de nível profissional ou acadêmico, que juntam o ESP32, o SCT-013, o circuito de offset e o código de cálculo, você precisa usar os termos que os engenheiros e makers avançados usam em seus repositórios e artigos.
+
+Como a maior parte do conteúdo técnico global e de código aberto está em inglês, pesquisar nesse idioma vai te abrir as portas para os melhores projetos (com esquemas de placas de circuito impresso, códigos completos e calibrações).
+
+Aqui estão os melhores termos divididos por categoria para você buscar no Google, GitHub ou YouTube:
+
+---
+
+## 🔍 Termos de Pesquisa para Projetos Completos
+
+### 1. O Nome Técnico do Sistema
+
+Em engenharia, esse tipo de projeto não é chamado apenas de "medidor". O termo correto é **Monitor de Energia** ou **Sistema de Gerenciamento de Energia**.
+
+* `"ESP32 Energy Monitor SCT-013"`
+* `"ESP32 IoT Power Meter"`
+* `"Home Energy Monitoring System ESP32"`
+
+### 2. Foco no Código e Bibliotecas Prontas
+
+Existe uma biblioteca famosíssima no mundo todo criada especificamente para fazer todos esses cálculos matemáticos complexos (do Tema 4) chamada **EmonLib**. Pesquisar por ela vai te poupar muito trabalho:
+
+* `"ESP32 EmonLib SCT-013"`
+* `"EmonLibESP32 GitHub"` *(Essa é uma versão da biblioteca otimizada especificamente para o ADC do ESP32)*
+
+### 3. Foco no Circuito Eletrônico Real (Hardware)
+
+Se você quer ver como as pessoas desenham a placa de circuito (PCB) para deixar o projeto profissional, use:
+
+* `"SCT-013 ESP32 schematic design"`
+* `"ESP32 current sensor conditioning circuit"`
+* `"ESP32 energy monitor PCB"`
+
+---
+
+## 🌐 Projetos Reais de Referência para Você Conhecer
+
+Quando fizer suas pesquisas, você vai esbarrar em alguns projetos que são referências mundiais nessa área. Vale a pena pesquisar direto pelo nome deles:
+
+### OpenEnergyMonitor (O "Pai" desses projetos)
+
+É uma comunidade de hardware livre focada puramente em monitoramento de energia. O site deles (`learn.openenergymonitor.org`) é a maior enciclopédia que existe sobre o assunto. Eles explicam detalhadamente toda a matemática e a eletrônica por trás do SCT-013.
+
+* **O que pesquisar:** `"OpenEnergyMonitor CT sensors interface"`
+
+### Painéis de Monitoramento (IoT)
+
+Projetos reais geralmente não jogam os dados apenas no monitor serial; eles enviam para um aplicativo ou painel web. Procure por projetos que integram o ESP32 com plataformas de relatórios:
+
+* `"ESP32 SCT-013 Home Assistant"` (Integração com automação residencial)
+* `"ESP32 energy monitor Blynk"` (Para ver o consumo no celular)
+* `"ESP32 SCT-013 InfluxDB Grafana"` (Para criar gráficos profissionais de consumo ao longo dos meses)
+
+---
+
+## 🛠️ O que olhar quando encontrar um projeto?
+
+Ao abrir um projeto real na internet, fixe seus olhos em três coisas para aprender:
+
+1. **O valor dos resistores de Burden:** Veja se o autor usou o sensor de corrente ou de tensão e como ele calculou o resistor.
+2. **A calibração no código:** Procure por uma linha no código parecida com `emon1.current(34, 111.1);`. Esse número `111.1` é o fator de calibração. Cada projeto ajusta esse número para que a leitura fique idêntica à de um multímetro real.
+
+Com esses termos, você vai encontrar projetos idênticos ao sistema de aquisição real que você quer montar. Quer focar primeiro na parte do circuito impresso ou na integração com algum aplicativo para ver os dados?

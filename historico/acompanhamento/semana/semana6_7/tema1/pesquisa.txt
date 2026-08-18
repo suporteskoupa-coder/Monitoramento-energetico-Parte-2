@@ -1,0 +1,141 @@
+======================================================================
+ENTENDENDO O ADC DO ESP32
+======================================================================
+
+O Conversor Analógico-Digital (ADC) do ESP32 transforma tensões elétricas 
+variáveis (sinais analógicos) em valores digitais que o microcontrolador 
+consegue processar.
+
+---
+
+### CARACTERÍSTICAS PRINCIPAIS
+
+* Resolução: 
+  12 bits (Gerando 4096 valores possíveis, em uma escala de 0 a 4095).
+
+* Faixa de Tensão Padrão: 
+  Mede originalmente de 0 V a 3,3 V (quando configurado com a 
+  atenuação correta).
+
+* Canais Disponíveis: 
+  18 pinos de entrada analógica divididos em dois controladores internos:
+  - ADC1: 8 canais independentes (GPIOs 32 a 39). Prioridade para 
+    leitura contínua.
+  - ADC2: 10 canais (GPIOs 0, 2, 4, 12, 13, 14, 15, 25, 26, 27).
+
+> ATENÇÃO: O controlador ADC2 não pode ser utilizado simultaneamente 
+  com o Wi-Fi. Se o Wi-Fi estiver ativo, as leituras do ADC2 falharão.
+
+---
+
+### COMO LER E CONVERTER VALORES
+
+Por padrão, a leitura direta do chip mede uma faixa reduzida de até ~1,1 V. 
+Para conseguir ler tensões maiores (até 3,3 V), aplicamos uma atenuação 
+interna que reduz a força do sinal.
+
+TABELA DE ATENUAÇÃO:
+* 0 dB  -> Mede até ~ 1,1 V
+* 2.5 dB -> Mede até ~ 1,5 V
+* 6 dB   -> Mede até ~ 2,2 V
+* 11 dB  -> Mede até ~ 3,9 V (Ideal para o limite físico de 3,3 V da placa)
+
+FÓRMULA DE CONVERSÃO:
+Para descobrir a tensão real em Volts de um pino, aplica-se a equação:
+V_lida = (Valor_ADC / 4095) * V_max
+
+(Onde V_max é o limite da escala ajustado pela atenuação, normalmente 3,3 V).
+
+---
+
+### EXEMPLO DE CÓDIGO (Arduino IDE)
+
+O código abaixo configura a atenuação correta de 11 dB para ler até 3,3 V 
+no Pino 34 (ADC1) e exibe os valores convertidos no Monitor Serial.
+
+#define Pino_Analogico 34
+
+void setup() {
+  Serial.begin(115200);
+  // Ajusta a atenuação para permitir ler tensões de até 3,3V
+  analogSetAttenuation(ADC_11db); 
+}
+
+void loop() {
+  // Leitura do valor digital bruto (0 a 4095)
+  int valor_bruto = analogRead(Pino_Analogico);
+  
+  // Conversão matemática para Volts
+  float tensao = valor_bruto * (3.3 / 4095.0);
+
+  // Exibição dos dados
+  Serial.print("Valor lido: ");
+  Serial.print(valor_bruto);
+  Serial.print(" | Tensao: ");
+  Serial.print(tensao);
+  Serial.println(" V");
+
+  delay(500);
+}
+
+---
+
+### LIMITAÇÕES COMUNS E CUIDADOS
+
+* Não-linearidade: 
+  O gráfico de conversão do ESP32 não é uma linha reta perfeita. Valores 
+  intermediários podem apresentar pequenas distorções em relação à tensão real.
+
+* Zonas Mortas (Ruído nas extremidades): 
+  Perto de 0 V (abaixo de 0,1 V) e perto do topo (acima de 3,2 V), o chip 
+  satura e perde a precisão, mostrando flutuações ou valores travados.
+
+* Conflito com Wi-Fi: 
+  Evite usar os pinos do ADC2 caso seu projeto precise enviar dados 
+  via internet ou usar conexões sem fio.
+======================================================================
+
+
+======================================================================
+ENTENDENDO O COMANDO: analogRead()
+======================================================================
+
+O comando analogRead lê a voltagem de um pino analógico e a transforma 
+em um número digital. 
+
+No Arduino Uno, ele usa 10 bits de resolução. Isso significa que ele 
+converte tensões de 0 a 5V em valores inteiros que vão de 0 a 1023.
+
+---
+
+### FUNCIONAMENTO BÁSICO
+
+* Conversor (ADC): 
+  O Conversor Analógico-Digital mede a tensão. Pense nele como uma régua 
+  com 1024 marcações para medir o nível de água em um copo.
+
+* Fórmula: 
+  O valor digital é calculado pela proporção de tensão:
+  Valor = (Tensão Lida * 1023) / Tensão de Referência
+
+* Exemplo Prático: 
+  Se você ligar um potenciômetro (botão giratório) que fornece 2,5V 
+  ao pino A0, o analogRead(A0) retornará aproximadamente 511.
+
+---
+
+### EXEMPLO DE CÓDIGO (Arduino)
+
+int pinoSensor = A0; // Define o pino A0 para leitura
+int valorLido = 0;   // Variável para guardar o valor
+
+void setup() {
+  Serial.begin(9600); // Inicia a comunicação com o computador
+}
+
+void loop() {
+  valorLido = analogRead(pinoSensor); // Lê a voltagem do pino
+  Serial.println(valorLido);          // Mostra o valor na tela
+  delay(100);                         // Espera 0.1 segundos
+}
+======================================================================

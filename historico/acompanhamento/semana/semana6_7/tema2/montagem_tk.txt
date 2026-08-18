@@ -1,0 +1,52 @@
+======================================================================
+SIMULAÇÃO NO TINKERCAD: LIMITAÇÕES E ADAPTAÇÕES
+======================================================================
+
+Infelizmente, não dá para simular esse circuito perfeitamente no 
+Tinkercad por causa de duas limitações da própria plataforma:
+
+1. Falta do Componente: 
+   O Tinkercad não possui o sensor SCT-013 (ou qualquer transformador 
+   de corrente não invasivo) em seu catálogo de componentes.
+
+2. Falta do Microcontrolador: 
+   O Tinkercad simula muito bem o Arduino Uno, mas ele não possui o 
+   ESP32 disponível para montagem e programação no ambiente de circuitos.
+
+---
+
+### COMO BURLAR ISSO NO TINKERCAD PARA TREINAR?
+
+Se o seu objetivo for apenas testar a lógica do circuito de condicionamento 
+e o código antes de ir para a vida real, você pode fazer uma adaptação 
+teórica no Tinkercad usando o Arduino Uno:
+
+* Para Substituir o ESP32: 
+  Você usa o Arduino Uno. A lógica do circuito é idêntica, a única 
+  diferença é que o Arduino funciona com 5V em vez de 3.3V. Portanto, o 
+  seu "falso zero" (DC Bias) precisará ser de 2.5V (metade de 5V) usando 
+  os mesmos dois resistores iguais.
+
+* Para Substituir o SCT-013: 
+  Você pode usar um Gerador de Função (Function Generator) do Tinkercad. 
+  Configure-o para gerar uma onda senoidal (AC) com uma frequência de 
+  60 Hz e uma amplitude baixa (como 1V), simulando exatamente o que o 
+  sensor enviaria.
+
+Dessa forma, você consegue montar os resistores, o capacitor, ligar na 
+porta analógica A0 do Arduino e ver o sinal sendo deslocado perfeitamente 
+no osciloscópio virtual do Tinkercad.
+
+---
+
+### RESUMO DA ADAPTAÇÃO NO TINKERCAD
+
+* Tensão de Operação: 
+  Como o Tinkercad usa o Arduino Uno rodando a 5V, o nosso "falso zero" 
+  muda de 1.65V para 2.5V (metade de 5V).
+
+* Comportamento da Onda: 
+  O Gerador de Funções vai injetar uma onda que vai para o lado negativo, 
+  e o circuito com os resistores vai empurrá-la para cima, exatamente como 
+  faria com o ESP32 na vida real.
+======================================================================

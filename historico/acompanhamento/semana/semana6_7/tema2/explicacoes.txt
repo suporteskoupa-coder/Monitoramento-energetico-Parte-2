@@ -1,0 +1,133 @@
+======================================================================
+ENTENDENDO TRANSFORMADORES DE CORRENTE (TC) E CORRENTE ALTERNADA (CA)
+======================================================================
+
+O QUE É UM TRANSFORMADOR DE CORRENTE (TC)?
+----------------------------------------------------------------------
+Um Transformador de Corrente (TC) é um dispositivo elétrico projetado 
+para reduzir correntes elétricas elevadas para níveis mais baixos e 
+seguros, permitindo que elas sejam medidas por instrumentos comuns ou 
+monitoradas por relés de proteção.
+
+Em termos simples: se um cabo de alta tensão está passando uma corrente 
+massiva de 1000A, você não pode ligar um medidor comum diretamente nele 
+(ia explodir tudo). O TC "traduz" esses 1000A para algo gerenciável, 
+como 5A ou 1A.
+
+---
+
+### COMO ELE FUNCIONA?
+
+O TC funciona com base no princípio da indução eletromagnética (como 
+qualquer transformador). Ele possui dois circuitos principais:
+
+1. Circuito Primário: 
+   É o cabo ou barra por onde passa a corrente alta que você quer medir. 
+   Ele passa pelo "buraco" (janela) do TC ou se conecta aos seus 
+   terminais. Funciona como uma espira única.
+
+2. Circuito Secundário: 
+   É um enrolamento de fio fino com muitas voltas (espiras) ao redor de 
+   um núcleo de ferro. É aqui que a corrente reduzida é gerada e enviada 
+   para os medidores.
+
+---
+
+### A RELAÇÃO DE TRANSFORMAÇÃO (RTC)
+
+A redução da corrente é proporcional. Cada TC tem uma relação de 
+transformação fixa.
+
+* Exemplo: Um TC com relação de 500:5 A.
+  - Significa que se passarem 500A no primário, sairão 5A no secundário.
+  - Se passarem 250A no primário, sairão 2.5A no secundário, e assim 
+    por diante.
+
+---
+
+### PARA QUE ELE SERVE?
+
+Os TCs têm três funções principais no setor elétrico:
+
+1. Medição: Permitir que amperímetros, medidores de energia (como o da 
+   sua conta de luz) e indicadores digitais leiam correntes altíssimas 
+   com segurança.
+
+2. Proteção: Enviar sinais precisos para relés de proteção. Se a corrente 
+   subir drasticamente (um curto-circuito), o TC avisa o relé, que 
+   desarma o disjuntor para salvar o sistema.
+
+3. Isolação de Segurança: Ele isola eletricamente o circuito de alta 
+   tensão do circuito de medição (baixa tensão). Isso protege os operadores 
+   e os equipamentos delicados de choques e surtos.
+
+> AVISO DE SEGURANÇA VITAL (Regra de Ouro do TC): 
+  NUNCA deixe o circuito secundário de um TC aberto enquanto o primário 
+  estiver energizado. Se você desconectar o medidor e deixar os fios do 
+  secundário soltos com o sistema funcionando, a tensão nos terminais vai 
+  subir para milhares de volts. Isso pode destruir o transformador, causar 
+  incêndios ou ser fatal. Se precisar remover o medidor, o secundário 
+  do TC deve ser curto-circuitado antes.
+
+---
+
+O QUE É CORRENTE ALTERNADA (CA / AC)?
+----------------------------------------------------------------------
+O jeito mais fácil de entender a Corrente Alternada é comparando-a com a 
+Corrente Contínua (CC/DC), que é a que você usa em pilhas e baterias.
+
+### O QUE ELA É?
+
+A corrente alternada é um tipo de corrente elétrica em que os elétrons 
+não caminham em um único sentido. Em vez disso, eles ficam "vibrando" 
+para frente e para trás dentro do fio.
+
+* Corrente Contínua (CC): Os elétrons saem do polo negativo e vão para o 
+  positivo de forma constante. O fluxo é em sentido único.
+* Corrente Alternada (CA): O fluxo inverte de direção continuamente. Uma 
+  hora o polo é positivo, no instante seguinte ele vira negativo, e o 
+  ciclo se repete.
+
+---
+
+### A FREQUÊNCIA (O ritmo da alternância)
+
+Essa mudança de sentido acontece incrivelmente rápido. A velocidade com 
+que a corrente vai e volta em um segundo é chamada de frequência, medida 
+em Hertz (Hz).
+
+* No Brasil, a frequência da rede elétrica é de 60 Hz.
+* Isso significa que a corrente muda de direção 60 vezes por segundo!
+
+---
+
+### POR QUE USAMOS ELA NAS TOMADAS DAS CASAS?
+
+Usamos a corrente alternada principalmente pelo transporte de energia:
+
+1. Fácil de transformar: É muito fácil aumentar ou diminuir a tensão 
+   (voltagem) da Corrente Alternada usando transformadores.
+2. Menos desperdício: Para enviar energia por centenas de quilômetros, a 
+   tensão precisa ser absurdamente alta para que a energia não se perca 
+   em forma de calor nos fios. Na chegada da sua cidade, transformadores 
+   baixam essa tensão para níveis seguros (127V ou 220V).
+
+---
+
+### O GRÁFICO DA CORRENTE ALTERNADA (A Onda Senoidal)
+
+Se você pudesse olhar a corrente alternada em um gráfico (usando um 
+osciloscópio), você veria uma onda perfeita (chamada de onda senoidal):
+
+* Ela começa no 0V.
+* Sobe até um pico positivo (ex: +179V no pico de uma rede de 127V RMS).
+* Desce passando pelo 0V novamente.
+* Vai até um pico negativo (ex: -179V).
+* Volta para o 0V.
+
+> PERIGO PARA O ESP32: É exatamente por causa desse comportamento de ir 
+  para o lado "negativo" do gráfico que o seu ESP32 corre perigo sem o 
+  circuito de condicionamento. Como o microcontrolador só entende tensões 
+  positivas (0V a 3.3V), aquela metade da onda que desce abaixo de zero 
+  danificaria o pino de leitura se injetada diretamente.
+======================================================================

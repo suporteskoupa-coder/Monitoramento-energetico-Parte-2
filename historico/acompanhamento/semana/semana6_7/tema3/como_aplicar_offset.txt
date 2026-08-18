@@ -1,0 +1,76 @@
+======================================================================
+PASSO A PASSO: MONTAGEM DO CIRCUITO DE OFFSET NA PROTOBOARD (ESP32)
+======================================================================
+
+Veja exatamente como montar o circuito de offset (deslocamento DC) na 
+sua protoboard para conectar o SCT-013 ao ESP32 com total segurança.
+
+---
+
+### LISTA DE COMPONENTES NECESSÁRIOS
+
+* 2x Resistores: 
+  De 10 kOhm (podem ser de 10 kOhm a 100 kOhm, desde que os dois 
+  sejam idênticos).
+
+* 1x Capacitor Eletrolítico: 
+  De 10 uF (ou 100 uF), com isolamento de pelo menos 6.3V ou 16V.
+
+* 1x Resistor de Burden: 
+  (ATENÇÃO: Só use este resistor se o seu SCT-013 for o modelo de saída 
+  em corrente, como o SCT-013-000. Se o seu for o modelo de saída em 
+  tensão, como o SCT-013-030, pule este componente). Valores comuns 
+  para testes: 22 Ohm ou 33 Ohm.
+
+* Diversos: 
+  Fios jumpers e uma Protoboard.
+
+---
+
+### ESQUEMA DE LIGAÇÃO (PASSO A PASSO)
+
+Imagine a sua protoboard dividida em linhas. Vamos conectar tudo usando 
+como referência os pinos do ESP32:
+
+PASSO 1: Criando o Divisor de Tensão (Os Resistores)
+* Pegue o primeiro resistor de 10 kOhm e ligue uma perna no pino 3V3 
+  do ESP32 e a outra perna em uma linha vaga da protoboard (vamos 
+  chamar de Linha Central).
+* Pegue o segundo resistor de 10 kOhm e ligue uma perna nessa mesma 
+  Linha Central e a outra perna no GND do ESP32.
+* Resultado: A Linha Central agora tem exatamente 1.65V.
+
+PASSO 2: Estabilizando com o Capacitor
+* O capacitor eletrolítico tem polaridade: o lado com uma faixa branca/
+  negativa é o polo negativo.
+* Ligue a perna positiva (mais longa) na Linha Central.
+* Ligue a perna negativa (mais curta, com a faixa) no GND do ESP32.
+* Resultado: O capacitor filtra os ruídos e garante que os 1.65V 
+  fiquem cravados e estáveis.
+
+PASSO 3: Conectando o Sensor SCT-013
+* O plugue do SCT-013 tem dois fios principais de sinal que saem dele 
+  (caso você corte o cabo ou use um jack fêmea adaptador):
+  - Ligue o Fio 1 do sensor na Linha Central (onde estão os 1.65V).
+  - Ligue o Fio 2 do sensor direto no pino de leitura do ESP32 (ex: GPIO 34).
+* NOTA: Se o seu sensor for o SCT-013-000 (saída em corrente), coloque 
+  o resistor de Burden (22 Ohm ou 33 Ohm) ligado diretamente entre o 
+  Fio 1 e o Fio 2 do sensor na protoboard.
+
+---
+
+### COMO O ESP32 ENXERGA O SINAL AGORA?
+
+* Com o Eletrodoméstico Desligado: 
+  A corrente no sensor será zero. O pino GPIO 34 vai ler fixo os 1.65V 
+  da Linha Central. Na função analogRead(34), o resultado no código 
+  será algo bem próximo de 2048 (metade de 4095).
+
+* Com o Eletrodoméstico Ligado (Ex: Geladeira ou Chuveiro): 
+  O sensor começará a gerar a onda AC. O valor no analogRead vai oscilar 
+  rapidamente em torno do centro (Ex: 2048 -> 2500 -> 2048 -> 1500 -> 2048).
+
+* Conclusão: 
+  O sinal vai subir e descer, mas nunca ficará negativo e nunca passará 
+  de 3.3V, protegendo o seu ESP32 perfeitamente!
+======================================================================
